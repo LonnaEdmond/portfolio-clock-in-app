@@ -1,1 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:wght@400;500;700&display=swap');
 @import "tailwindcss";
+
+@theme {
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --color-zinc-950: #09090b;
+  --color-zinc-900: #18181b;
+  --color-zinc-800: #27272a;
+  --color-zinc-400: #a1a1aa;
+  --color-terracotta: #ea580c;
+}
+
+body {
+  background-color: var(--color-zinc-950);
+  color: #fafafa;
+  font-family: var(--font-sans);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+
+/* Mechanical loading bar */
+@keyframes loadingBar {
+  0% { transform: translateX(-100%); width: 100%; }
+  100% { transform: translateX(100%); width: 50%; }
+}
+
+.mechanical-loading::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; bottom: 0; width: 30%;
+  background-color: rgba(234, 88, 12, 0.3);
+  animation: loadingBar 1s linear infinite;
+}

@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-[#09090b] text-[#fafafa] font-sans antialiased">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1099 Portal Proof-of-Concept</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Feather Icons (Lucide alternative for easy CDN) -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        zinc: {
+                            400: '#a1a1aa',
+                            500: '#71717a',
+                            600: '#52525b',
+                            800: '#27272a',
+                            900: '#18181b',
+                            950: '#09090b',
+                        },
+                        terracotta: '#ea580c',
+                    },
+                    animation: {
+                        'fade-up': 'fadeUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'ping': 'ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeUp: {
+                            '0%': { opacity: '0', transform: 'translateY(15px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .delay-100 { animation-delay: 100ms; opacity: 0; }
+        .delay-200 { animation-delay: 200ms; opacity: 0; }
+        
+        .mechanical-loading::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; bottom: 0; width: 30%;
+            background-color: rgba(234, 88, 12, 0.3);
+            animation: loadingBar 1s linear infinite;
+        }
+
+        @keyframes loadingBar {
+            0% { transform: translateX(-100%); width: 100%; }
+            100% { transform: translateX(100%); width: 50%; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #09090b; }
+        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+    </style>
+</head>
+<body class="selection:bg-terracotta selection:text-white overflow-x-hidden min-h-screen">
+    
+    <!-- Decorative Matrix Background -->
+    <div class="fixed inset-0 z-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0); background-size: 32px 32px"></div>
+
+    <div class="p-4 md:p-8 lg:p-12 relative z-10 max-w-7xl mx-auto">
+        <!-- Top Header -->
+        <header class="flex items-center justify-between mb-16 animate-fade-up">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded bg-zinc-900 border border-zinc-800 flex items-center justify-center">
+                    <i data-feather="cpu" class="w-4 h-4 text-zinc-400"></i>
+                </div>
+                <span class="font-mono text-xs text-zinc-400 uppercase tracking-widest">Portfolio | Case Study 01</span>
+            </div>
+            <div class="flex gap-4" id="view-toggles">
+                <button data-view="contractor" class="toggle-btn py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 uppercase tracking-wider bg-zinc-900 border-terracotta border text-white shadow-[0_0_15px_rgba(234,88,12,0.15)]">Contractor UI</button>
+                <button data-view="admin" class="toggle-btn py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 uppercase tracking-wider bg-zinc-950 border border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-white">Admin UI</button>
+                <button data-view="architecture" class="toggle-btn py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 uppercase tracking-wider bg-zinc-950 border border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-white">Architecture</button>
+            </div>
+        </header>
+
+        <main class="flex flex-col lg:flex-row gap-12 lg:gap-24 items-start pb-20">
+            <!-- Left Column: Context -->
+            <section class="w-full lg:w-[35%] flex flex-col gap-10 animate-fade-up delay-100">
+                <div>
+                    <h1 class="text-5xl lg:text-6xl font-serif text-white leading-[1.1] mb-6">
+                        1099 Field Portal & <br />
+                        <span class="text-zinc-500 italic">Command Center</span>
+                    </h1>
+                    <p class="text-zinc-400 text-lg leading-relaxed">
+                        Bridging the gap between active construction jobsites and backend financial operations. A high-leverage tool replacing manual payroll ingestion with an automated, location-aware digital ledger.
+                    </p>
+                </div>
+
+                <div class="space-y-6">
+                    <h3 class="font-mono text-sm text-zinc-500 uppercase tracking-widest border-b border-zinc-800 pb-2">Business Bottlenecks Solved</h3>
+                    
+                    <div class="group flex gap-4 items-start p-4 -mx-4 rounded-xl hover:bg-zinc-900 border border-transparent hover:border-zinc-800 transition-all duration-200">
+                        <div class="bg-zinc-950 border border-zinc-800 p-2 rounded-lg group-hover:border-terracotta group-hover:text-terracotta transition-colors">
+                            <i data-feather="shield" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-medium mb-1">Geolocation Compliance Shield</h4>
+                            <p class="text-sm text-zinc-400 leading-relaxed">Requires a passive GPS ping locking the contractor within a 50m radius of the assigned site before the clock starts. <span class="text-terracotta font-mono text-xs block mt-2">ROI: Prevents thousands in payroll leakage.</span></p>
+                        </div>
+                    </div>
+
+                    <div class="group flex gap-4 items-start p-4 -mx-4 rounded-xl hover:bg-zinc-900 border border-transparent hover:border-zinc-800 transition-all duration-200">
+                        <div class="bg-zinc-950 border border-zinc-800 p-2 rounded-lg group-hover:border-terracotta group-hover:text-terracotta transition-colors">
+                            <i data-feather="refresh-cw" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-medium mb-1">Per Diem Auto-Tagging</h4>
+                            <p class="text-sm text-zinc-400 leading-relaxed">Eliminates manual finance review. A single boolean toggle routes a guaranteed $50 stipend directly into the generated invoice metadata payload.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 relative overflow-hidden rounded-xl bg-zinc-900 border border-zinc-800 p-6">
+                        <div class="absolute top-0 right-0 p-4 opacity-10">
+                            <i data-feather="database" class="w-24 h-24"></i>
+                        </div>
+                        <p class="font-mono text-terracotta mb-2">Efficiency Gain</p>
+                        <h4 class="text-2xl font-serif text-white mb-2">40+ hours saved <span class="text-zinc-500 italic">weekly</span></h4>
+                        <p class="text-sm text-zinc-400">Replaces disparate text messages, paper logs, and manual QuickBooks data entry for a 100+ contractor fleet.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Column: Interactive Showcase -->
+            <section class="w-full lg:w-[65%] flex justify-center animate-fade-up delay-200">
+                
+                <!-- Sandbox View (Contractor & Admin) -->
+                <div id="sandbox-container" class="flex gap-8 items-stretch relative">
+                    <!-- Device Frame -->
+                    <div class="w-[340px] h-[720px] bg-[#111111] rounded-[3rem] border-8 border-zinc-900 shadow-2xl relative overflow-hidden flex flex-col justify-between transition-transform duration-500 hover:scale-[1.02] shrink-0">
+                        
+                        <!-- Notch -->
+                        <div class="absolute top-0 inset-x-0 h-7 flex justify-center z-50 pointer-events-none">
+                            <div class="w-1/3 bg-zinc-950 h-5 rounded-b-xl border-x border-b border-zinc-800"></div>
+                        </div>
+
+                        <!-- Contractor View -->
+                        <div id="contractor-view" class="h-full flex flex-col px-6 pt-12 pb-8 overflow-y-auto">
+                            <div class="mb-8">
+                                <h4 class="font-mono text-zinc-500 text-[10px] tracking-widest uppercase mb-1">Contractor App</h4>
+                                <h2 class="text-white font-medium text-lg flex items-center justify-between">
+                                    Field Portal <span class="bg-terracotta/20 text-terracotta px-2 py-0.5 rounded text-xs">v2.1</span>
+                                </h2>
+                            </div>
+                            
+                            <div class="mb-6 space-y-2">
+                                <label class="text-xs font-mono text-zinc-400">Target Assignment</label>
+                                <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-3 text-sm flex justify-between items-center cursor-pointer hover:border-zinc-700 transition-colors">
+                                    <span class="truncate">25-177 - Brewer High School</span>
+                                    <i data-feather="chevron-right" class="w-4 h-4 text-zinc-500"></i>
+                                </div>
+                            </div>
+
+                            <div id="per-diem-toggle" class="mb-10 bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 flex items-center justify-between cursor-pointer hover:bg-zinc-900 transition-colors">
+                                <div>
+                                    <h4 class="text-sm font-medium mb-1">Per Diem Request</h4>
+                                    <p class="text-[10px] text-zinc-500 font-mono">+ $50.00 Stipend Flag</p>
+                                </div>
+                                <div id="per-diem-switch" class="w-10 h-6 rounded-full p-1 transition-colors relative bg-zinc-800">
+                                    <div class="w-4 h-4 rounded-full bg-white transition-transform translate-x-0"></div>
+                                </div>
+                            </div>
+
+                            <div class="flex-1 flex flex-col items-center justify-center -mt-6">
+                                <button id="clock-btn" class="relative w-48 h-48 rounded-full flex flex-col items-center justify-center transition-all duration-300 bg-zinc-900 border-2 border-zinc-800 hover:border-[#10BE66] hover:shadow-[0_0_30px_rgba(16,190,102,0.2)] text-[#10BE66]">
+                                    <i id="btn-icon" data-feather="activity" class="w-10 h-10 mb-2 z-10"></i>
+                                    <span id="btn-text" class="font-mono font-bold tracking-widest uppercase z-10 text-sm">CLOCK IN</span>
+                                    <div id="ping-ring" class="absolute inset-0 rounded-full border border-terracotta/30 animate-ping hidden"></div>
+                                </button>
+                            </div>
+
+                            <div class="mt-auto bg-black rounded-lg p-3 font-mono text-[10px] text-zinc-500 border border-zinc-900 flex flex-col">
+                                <span class="text-zinc-600 border-b border-zinc-800 pb-1 mb-1">SYSTEM CONSOLE</span>
+                                <span id="console-text" class="text-zinc-400">&gt; Awaiting Input...</span>
+                                <span id="console-success" class="text-[#10BE66] mt-1 hidden">&gt; STATUS O.K. - UPLINK ACTIVE</span>
+                            </div>
+                        </div>
+
+                        <!-- Admin View -->
+                        <div id="admin-view" class="h-full hidden flex-col bg-[#0f0f12]">
+                            <div class="h-44 bg-zinc-900 border-b border-zinc-800 relative overflow-hidden">
+                                <div class="absolute inset-0 opacity-10" style="background-image: linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px); background-size: 20px 20px"></div>
+                                <div class="absolute bottom-4 left-4 font-mono text-xs text-white bg-black/50 px-2 py-1 rounded backdrop-blur border border-zinc-800 z-10">ACTIVE LOCATIONS: 3</div>
+                                <div class="absolute top-10 left-10 w-4 h-4 rounded-full bg-green-500 shadow-[0_0_10px_#22c55e]"></div>
+                                <div class="absolute top-20 right-16 w-4 h-4 rounded-full bg-green-500 shadow-[0_0_10px_#22c55e]"></div>
+                                <div class="absolute bottom-10 right-20 w-4 h-4 rounded-full bg-terracotta shadow-[0_0_10px_#ea580c] animate-[ping_2s_infinite]"></div>
+                            </div>
+                            <div class="px-5 py-6">
+                                <h3 class="text-white font-serif text-xl border-b border-zinc-800 pb-3 mb-4">Command Center</h3>
+                                <div class="space-y-3">
+                                    <div class="bg-zinc-900/80 border border-zinc-800 rounded-lg p-3 hover:border-zinc-700 transition-colors">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <div>
+                                                <h5 class="text-sm font-medium">Pedro Gutierrez</h5>
+                                                <span class="text-zinc-500 text-[10px] font-mono">ID: SUB-001</span>
+                                            </div>
+                                            <span class="bg-green-500/10 text-green-500 border border-green-500/20 px-2 py-0.5 rounded text-[10px] uppercase font-mono">Active</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 text-zinc-400 text-xs">
+                                            <i data-feather="clock" class="w-3 h-3"></i><span>04:15 HRS • 25-177</span>
+                                        </div>
+                                    </div>
+                                    <div class="bg-zinc-900/80 border border-zinc-800 rounded-lg p-3 hover:border-zinc-700 transition-colors">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <div>
+                                                <h5 class="text-sm font-medium">Luis Perez</h5>
+                                                <span class="text-zinc-500 text-[10px] font-mono">ID: SUB-042</span>
+                                            </div>
+                                            <span class="bg-zinc-800 text-zinc-400 border border-zinc-700 px-2 py-0.5 rounded text-[10px] uppercase font-mono">Out</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 text-zinc-400 text-xs">
+                                            <i data-feather="clock" class="w-3 h-3"></i><span>--:-- HRS • N/A</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Side Logic Panel -->
+                    <div id="logic-panel" class="hidden lg:flex flex-col gap-4 w-[280px] shrink-0 pt-16">
+                        <!-- Filled by JS based on view -->
+                    </div>
+                </div>
+
+                <!-- Architecture Panel (Hidden default) -->
+                <div id="arch-container" class="hidden w-full max-w-4xl bg-zinc-900 border border-zinc-800 rounded-[2rem] p-8 md:p-12 relative overflow-hidden shadow-2xl">
+                    <div class="absolute top-0 right-0 p-8 opacity-5">
+                        <i data-feather="server" class="w-64 h-64"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <div class="mb-10">
+                            <span class="font-mono text-terracotta text-sm uppercase tracking-widest block mb-2">Systems Pipeline</span>
+                            <h2 class="text-3xl font-serif text-white">AppSheet &rarr; Google Sheets Migration</h2>
+                            <p class="text-zinc-400 mt-2 max-w-xl leading-relaxed">
+                                While building the prototype, I also designed the transition architecture needed to replace expensive AppSheet publishing fees with a free script-driven Google Sheets backend.
+                            </p>
+                        </div>
+                        <div class="relative w-full border border-zinc-800 rounded-xl bg-zinc-950 p-6 font-mono text-[11px] md:text-sm overflow-x-auto text-zinc-400">
+                            <div class="text-zinc-500 mb-4">// System Block Diagram</div>
+                            <div class="flex flex-col gap-2">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-40 px-4 py-2 border border-zinc-700 rounded text-white bg-zinc-900 flex justify-center items-center gap-2 hover:border-terracotta hover:scale-105 transition-all">Client UI</div>
+                                    <div class="text-zinc-600">-&gt; JSON POST</div>
+                                    <div class="flex-1 px-4 py-2 border border-blue-900/50 rounded text-blue-300 bg-blue-950/20 text-center">Google Apps Script (Web App)</div>
+                                </div>
+                                <div class="flex items-center gap-4 ml-[11rem] pl-2 border-l border-zinc-800 py-3">
+                                    <div class="text-zinc-600">| parse() </div>
+                                    <div class="text-zinc-600">| map(uuid, timestamp) </div>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <div class="w-40 px-4 py-2 opacity-0">Spacer</div>
+                                    <div class="text-zinc-600">---&gt; append()</div>
+                                    <div class="flex-1 px-4 py-2 border border-green-900/50 rounded text-green-400 bg-green-950/20 flex flex-col items-center">
+                                        <span class="mb-1">Google Sheets DB</span>
+                                        <span class="text-[10px] text-green-600 border-t border-green-900/50 pt-1 mt-1 w-full text-center">Tabs: TimeLogs, Jobs, Master</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-8 pt-6 border-t border-zinc-800 grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div>
+                                    <h4 class="text-white mb-2 pb-1 border-b border-zinc-800">Migration Blueprints Written</h4>
+                                    <ul class="space-y-2">
+                                        <li class="flex items-center gap-2"><i data-feather="check-circle" class="w-3 h-3 text-[#10BE66]"></i> <code>GOOGLE_SHEETS_SETUP.md</code></li>
+                                        <li class="flex items-center gap-2"><i data-feather="check-circle" class="w-3 h-3 text-[#10BE66]"></i> <code>AppSheet_Migration.md</code></li>
+                                        <li class="flex items-center gap-2"><i data-feather="check-circle" class="w-3 h-3 text-[#10BE66]"></i> <code>doPost() App Script</code></li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 class="text-white mb-2 pb-1 border-b border-zinc-800">Security Model</h4>
+                                    <p class="text-zinc-500 leading-relaxed">
+                                        Migrating to a headless Script DB eliminates AppSheet licensing per user (~$10/user/mo across 109 contractors) while restricting frontend SQL-like exposure.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripting Interactions -->
+    <script>
+        feather.replace(); // Initialize Icons
+
+        // View Toggling logic
+        const viewToggles = document.querySelectorAll('.toggle-btn');
+        const sandboxContainer = document.getElementById('sandbox-container');
+        const archContainer = document.getElementById('arch-container');
+        const contractorView = document.getElementById('contractor-view');
+        const adminView = document.getElementById('admin-view');
+        const logicPanel = document.getElementById('logic-panel');
+
+        const logicContent = {
+            contractor: `
+                <div class="font-mono text-xs text-terracotta uppercase tracking-[0.2em] mb-2 flex items-center gap-2">
+                    <i data-feather="git-pull-request" class="w-4 h-4"></i> Live Logic Execution
+                </div>
+                <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-4 group hover:border-zinc-700 transition-colors">
+                    <div class="text-[10px] text-zinc-500 mb-1 font-mono">IF: GPS_Lock === TRUE</div>
+                    <div class="text-[10px] text-zinc-500 mb-2 font-mono">AND: Job_Selected !== NULL</div>
+                    <div class="text-white text-sm border-l-2 border-terracotta pl-3">Trigger: Allow Write Mutator</div>
+                    <p class="text-xs text-zinc-400 mt-2">Binds current UTC timestamp to Contractor UID and pushes to data pool.</p>
+                </div>
+                <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-4 group hover:border-zinc-700 transition-colors">
+                    <div class="text-[10px] text-zinc-500 mb-1 font-mono">ON: POST /payload</div>
+                    <div class="text-white text-sm border-l-2 border-green-500 pl-3">Append: <code>{ perDiem: true }</code></div>
+                    <p class="text-xs text-zinc-400 mt-2">Forces parsing engine generating PDF invoices to automatically add a $50 stipend line-item.</p>
+                </div>
+            `,
+            admin: `
+                <div class="font-mono text-xs text-terracotta uppercase tracking-[0.2em] mb-2 flex items-center gap-2">
+                    <i data-feather="database" class="w-4 h-4"></i> Data Aggregation Map
+                </div>
+                <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-4 group hover:border-zinc-700 transition-colors">
+                    <div class="text-[10px] text-zinc-500 mb-1 font-mono">SECURITY_RULE override</div>
+                    <div class="text-white text-sm border-l-2 border-blue-500 pl-3"><code>ROLE === 'Admin'</code></div>
+                    <p class="text-xs text-zinc-400 mt-2">Bypasses row-level security limits filtering "My Data Only", mapping 109 independent views onto a single dashboard.</p>
+                </div>
+            `
+        };
+
+        function switchView(view) {
+            // Update buttons
+            viewToggles.forEach(btn => {
+                if(btn.dataset.view === view) {
+                    btn.className = "toggle-btn py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 uppercase tracking-wider bg-zinc-900 border-terracotta border text-white shadow-[0_0_15px_rgba(234,88,12,0.15)]";
+                } else {
+                    btn.className = "toggle-btn py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 uppercase tracking-wider bg-zinc-950 border border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-white";
+                }
+            });
+
+            if(view === 'architecture') {
+                sandboxContainer.classList.add('hidden');
+                archContainer.classList.remove('hidden');
+            } else {
+                archContainer.classList.add('hidden');
+                sandboxContainer.classList.remove('hidden');
+                
+                if(view === 'contractor') {
+                    adminView.classList.add('hidden');
+                    contractorView.classList.remove('hidden');
+                    contractorView.classList.add('flex');
+                    logicPanel.innerHTML = logicContent.contractor;
+                } else {
+                    contractorView.classList.remove('flex');
+                    contractorView.classList.add('hidden');
+                    adminView.classList.remove('hidden');
+                    adminView.classList.add('flex');
+                    logicPanel.innerHTML = logicContent.admin;
+                }
+                feather.replace(); // re-init icons for dynamic content
+            }
+        }
+
+        // Init Default View
+        switchView('contractor');
+        viewToggles.forEach(btn => btn.addEventListener('click', (e) => switchView(e.target.dataset.view)));
+
+        // Per Diem Toggle Logic
+        let perDiemActive = false;
+        document.getElementById('per-diem-toggle').addEventListener('click', () => {
+            perDiemActive = !perDiemActive;
+            const switchEl = document.getElementById('per-diem-switch');
+            const handle = switchEl.querySelector('div');
+            if(perDiemActive) {
+                switchEl.classList.replace('bg-zinc-800', 'bg-terracotta');
+                handle.classList.replace('translate-x-0', 'translate-x-4');
+            } else {
+                switchEl.classList.replace('bg-terracotta', 'bg-zinc-800');
+                handle.classList.replace('translate-x-4', 'translate-x-0');
+            }
+        });
+
+        // Clock In Mechanical Sequence
+        let clockStatus = 'idle'; // idle, locating, clocked-in
+        const clockBtn = document.getElementById('clock-btn');
+        const btnText = document.getElementById('btn-text');
+        const btnIcon = document.getElementById('btn-icon');
+        const consoleText = document.getElementById('console-text');
+        const consoleSuccess = document.getElementById('console-success');
+        const pingRing = document.getElementById('ping-ring');
+
+        clockBtn.addEventListener('click', () => {
+            if (clockStatus === 'idle') {
+                clockStatus = 'locating';
+                
+                // Style to Loading
+                clockBtn.className = "relative w-48 h-48 rounded-full flex flex-col items-center justify-center transition-all duration-300 bg-zinc-900 border border-zinc-800 overflow-hidden mechanical-loading cursor-wait";
+                btnText.innerText = "SCANNING";
+                btnIcon.outerHTML = '<i id="btn-icon" data-feather="crosshair" class="w-10 h-10 mb-2 z-10 text-terracotta"></i>';
+                pingRing.classList.remove('hidden');
+                consoleText.classList.replace('text-zinc-400', 'text-terracotta');
+                consoleSuccess.classList.add('hidden');
+                feather.replace();
+
+                // Mechanical Steps
+                consoleText.innerText = "> Initializing Sat-Link...";
+                setTimeout(() => { consoleText.innerText = "> Verifying Site Bounds (50m radius)..."; }, 600);
+                setTimeout(() => { consoleText.innerText = "> GPS Lock Established. Writing Ledger..."; }, 1200);
+                setTimeout(() => { 
+                    clockStatus = 'clocked-in';
+                    consoleText.innerText = "> Session Active. Recording metadata.";
+                    consoleSuccess.classList.remove('hidden');
+                    consoleText.classList.replace('text-terracotta', 'text-zinc-400');
+                    pingRing.classList.add('hidden');
+                    
+                    // Style to Clocked In (Red)
+                    clockBtn.className = "relative w-48 h-48 rounded-full flex flex-col items-center justify-center transition-all duration-300 bg-zinc-900 border-2 border-red-500/50 hover:border-red-500 hover:shadow-[0_0_30px_rgba(239,68,68,0.2)] text-red-500";
+                    btnText.innerText = "CLOCK OUT";
+                    btnIcon.outerHTML = '<i id="btn-icon" data-feather="x" class="w-10 h-10 mb-2 z-10 text-red-500"></i>';
+                    feather.replace();
+                }, 1800);
+
+            } else if (clockStatus === 'clocked-in') {
+                clockStatus = 'idle';
+                consoleText.innerText = "> Session Ended. Ledger Updated.";
+                consoleSuccess.classList.add('hidden');
+                
+                // Style back to Idle (Green)
+                clockBtn.className = "relative w-48 h-48 rounded-full flex flex-col items-center justify-center transition-all duration-300 bg-zinc-900 border-2 border-zinc-800 hover:border-[#10BE66] hover:shadow-[0_0_30px_rgba(16,190,102,0.2)] text-[#10BE66]";
+                btnText.innerText = "CLOCK IN";
+                btnIcon.outerHTML = '<i id="btn-icon" data-feather="activity" class="w-10 h-10 mb-2 z-10 text-[#10BE66]"></i>';
+                feather.replace();
+
+                setTimeout(() => { 
+                    if (clockStatus === 'idle') consoleText.innerText = "> Awaiting Input..."; 
+                }, 2500);
+            }
+        });
+    </script>
+</body>
+</html>
