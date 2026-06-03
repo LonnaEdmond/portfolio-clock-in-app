@@ -1,0 +1,8 @@
+{
+  "name": "1099 CLOCK IN",
+  "description": "Contractor clock-in and invoice system for Sunbelt Sports.",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": []
+}

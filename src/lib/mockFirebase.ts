@@ -1,0 +1,10 @@
+export const collection = () => ({});
+export const query = () => ({});
+export const getDocs = async () => ({ docs: [], empty: true, forEach: () => {} });
+export const where = () => ({});
+export const addDoc = async () => ({ id: 'mock-id' });
+export const setDoc = async () => ({});
+export const updateDoc = async () => ({});
+export const doc = () => ({});
+export const serverTimestamp = () => new Date();
+export const orderBy = () => ({});
