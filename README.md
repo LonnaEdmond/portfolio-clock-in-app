@@ -1,20 +1,16 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Contractor Invoicing Pipeline
 
-# Run and deploy your AI Studio app
+**[Live demo →](https://1099-invoice-app.vercel.app/)** · part of [lonnaedmond.com](https://lonnaedmond.com)
 
-This contains everything you need to run your app locally.
+A validated data pipeline from jobsite to accounting: GPS-verified clock-ins, rule-based per-diem enrichment, and schema-conformant export ready for QuickBooks. The production deployment of this design has processed **$198K with 92% first-pass approval**.
 
-View your app in AI Studio: https://ai.studio/apps/d6cf66f2-bf64-4640-9985-cc8ed4754193
+## What it demonstrates
 
-## Run Locally
+- **Validation at capture** — GPS verification at clock-in, so bad data never enters the pipeline
+- **Rule-based enrichment** — per-diem auto-tagging applied consistently, not manually
+- **Typed export contract** — invoices rendered to an accounting-ready format (jsPDF), one shape, every time
+- Mobile-first UI built for people standing on a jobsite, not at a desk
 
-**Prerequisites:**  Node.js
+## Stack
 
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+React + Vite, deployed on Vercel. Demo shows the full flow on synthetic data; the production system is private.
